@@ -32,11 +32,25 @@ public class MainActivity extends AppCompatActivity {
 
         textView = findViewById(R.id.textView);
         button = findViewById(R.id.button);
+/*
+        // we are going to test weather the Location Permission is granted or not
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            textView.setText("Permission Granted........");
+        } else {
+            textView.setText("Permission is NOT GRANTED!");
+        }*/
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
 
         // we are going to test weather the Location Permission is granted or not
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             textView.setText("Permission Granted........");
         } else {
+            requestPermission();
             textView.setText("Permission is NOT GRANTED!");
         }
     }
@@ -96,5 +110,28 @@ public class MainActivity extends AppCompatActivity {
         Uri uri = Uri.fromParts("package", this.getPackageName(), null);
         intent.setData(uri);
         startActivity(intent);
+    }
+
+    public void requestPermission() {
+
+        if (ContextCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+            //PERMISSION is NOT GRANTED
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION)){
+                new AlertDialog.Builder(this)
+                        .setMessage("We need to permission for location!")
+                        .setCancelable(false)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE_FINE_LOCATION);
+                            }
+                        }).show();
+            }else {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},REQUEST_CODE_FINE_LOCATION);
+            }
+        }else {
+            //Permission GRANTED!
+            textView.setText("Permission Granted!");
+        }
     }
 }
